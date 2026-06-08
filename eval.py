@@ -2,7 +2,7 @@ import torch
 from utils.get_args import get_args
 from utils.plot_outputs import plot_outputs
 import numpy as np
-from datasets.segmentation_data import WFSeg
+from datasets import segmentation_data
 import os
 from torch.utils.data import DataLoader
 from torchvision.transforms.functional import resize
