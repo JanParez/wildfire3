@@ -82,8 +82,8 @@ def train(model, trainloader, valloader, args):
             optim.step()
             optim.zero_grad()
 
-            print("epoch: " + epoch + ", batch: " + batch)
-            if i % 10 == 0 and args.verbose:
+            print("jakub smrdi octem")
+            if i % 2 == 0:
                 print('Epoch: {:d}, batch: {:d}, Last training loss: {:.4f}'.format(epoch, i, last_loss))
         
         print('Finished epoch: {:d}, training loss: {:.7f}. validating'.format(epoch, (epoch_loss/(i+1))))
