@@ -52,7 +52,7 @@ def save_weights(model, optim, args, miou=False):
 
 def train(model, trainloader, valloader, args):
     optim = torch.optim.AdamW(model.parameters(), lr=1e-4)
-    print('Starting training')
+    print('Starting training :-)')
     for epoch in range(args.epochs):
         epoch_loss = 0
         model.train()
@@ -71,6 +71,8 @@ def train(model, trainloader, valloader, args):
                              box=batch['box'].to(args.device), 
                              lab_img=batch['lab_img'].to(args.device))
             #print(losses)
+            print('neco sme udelali')
+            
             loss = losses.mean()
             #acc = acc.mean()
             
