@@ -1,5 +1,5 @@
 import torch
-from datasets.segmentation_data import WFSeg
+from segmentation_data import WFSeg
 from torch.utils.data import DataLoader
 import numpy as np
 import os
