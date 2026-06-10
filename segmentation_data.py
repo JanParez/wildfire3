@@ -32,7 +32,7 @@ class WFSeg(Dataset):
         self.img_list = natsorted(os.listdir(self.img_dir))
         # If using manual masks, only include samples with a mask in the dataset
         if manual_masks:
-            self.mask_dir = os.path.join(root_dir, args.eval_dir, "train")
+            self.mask_dir = os.path.join(root_dir, args.eval_dir, self.mode)
             self.mask_list = [x[:-4] for x in natsorted(os.listdir(self.mask_dir))]
             in_imgs = lambda x, a: (x[:-4] in a) or (x[:-5] in a)
             in_masks = [in_imgs(x, self.mask_list) for x in self.img_list]
