@@ -66,6 +66,10 @@ class WFSeg(Dataset):
             # mask_in_masks = [(x in self.manual_list) for x in self.mask_list]
             # self.mask_list = list(compress(self.mask_list, mask_in_masks))
 
+        # ------------ MODIFICATION: SKIP EVERY OTHER IMAGE ------------
+        self.img_list = self.img_list[::2]
+        # --------------------------------------------------------------
+                     
         self.geometric_augments, self.color_augments = self.init_augments()
         self.boundary = boundary
         self.include_id = args.include_id
@@ -201,16 +205,16 @@ class WFSeg(Dataset):
                                                       edge=edge,
                                                       box=box)
 
-            img = v2.functional.resize(img, [1080, 1920], antialias=True)
+            img = v2.functional.resize(img, [540, 960], antialias=True)
             img = v2.functional.to_dtype(img, torch.float32, scale=True)
             img = v2.functional.normalize(img, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
-            mask = v2.functional.resize(mask, [1080, 1920], antialias=True)
+            mask = v2.functional.resize(mask, [540, 960], antialias=True)
             mask = v2.functional.to_dtype(mask, torch.float32, scale=True)
             mask = torch.round(mask)
 
             if self.boundary:
-                edge = v2.functional.resize(edge, [1080, 1920], antialias=True)
+                edge = v2.functional.resize(edge, [540, 960], antialias=True)
                 edge = v2.functional.to_dtype(edge, torch.float32, scale=True)
                 return {'img':img, 'mask':mask, 'boundary':edge}
             
@@ -222,14 +226,14 @@ class WFSeg(Dataset):
             # Image resize and norm
             img = v2.functional.to_image(img)
             img = v2.functional.to_dtype(img, torch.uint8)
-            img = v2.functional.resize(img, [1080, 1920], antialias=True)
+            img = v2.functional.resize(img, [540, 960], antialias=True)
             img = v2.functional.to_dtype(img, torch.float32, scale=True)
             img = v2.functional.normalize(img, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
             # Mask norm
             mask = v2.functional.to_image(mask)
             mask = v2.functional.to_dtype(mask, torch.uint8)
-            mask = v2.functional.resize(mask, [1080, 1920], antialias=True)
+            mask = v2.functional.resize(mask, [540, 960], antialias=True)
             mask = v2.functional.to_dtype(mask, torch.float32, scale=True)
             mask = torch.round(mask)
 
@@ -238,7 +242,7 @@ class WFSeg(Dataset):
                 edge = einops.rearrange(edge, 'h (w c) -> h w c ', c=1)
                 edge = v2.functional.to_image(edge)
                 edge = v2.functional.to_dtype(edge, torch.uint8)
-                edge = v2.functional.resize(edge, [1080, 1920], antialias=True)
+                edge = v2.functional.resize(edge, [540, 960], antialias=True)
                 edge = v2.functional.to_dtype(edge, torch.float32, scale=True)
                 return {'img':img, 'mask':mask, 'boundary':edge}
 
