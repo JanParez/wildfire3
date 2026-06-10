@@ -71,7 +71,6 @@ def train(model, trainloader, valloader, args):
                              box=batch['box'].to(args.device), 
                              lab_img=batch['lab_img'].to(args.device))
             #print(losses)
-            print('neco sme udelali')
             
             loss = losses.mean()
             #acc = acc.mean()
@@ -82,8 +81,7 @@ def train(model, trainloader, valloader, args):
             optim.step()
             optim.zero_grad()
 
-            print("jakub smrdi octem")
-            if i % 2 == 0:
+            if i % 10 == 0:
                 print('Epoch: {:d}, batch: {:d}, Last training loss: {:.4f}'.format(epoch, i, last_loss))
         
         print('Finished epoch: {:d}, training loss: {:.7f}. validating'.format(epoch, (epoch_loss/(i+1))))
