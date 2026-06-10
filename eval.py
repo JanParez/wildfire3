@@ -28,6 +28,10 @@ def eval(model, args, loader):
     total_recall = 0
     total_rand = 0
     total_f1 = 0
+
+    clean_images_count = 0
+    hallucinations_count = 0
+    
     with torch.no_grad():
         if args.vis_val:
             try:
@@ -53,6 +57,12 @@ def eval(model, args, loader):
 
             binary_mask_pred = torch.flatten(torch.round(F.sigmoid(outputs[1])))
             binary_gt = torch.flatten(mask)
+
+            if mask.max() == 0:  # Reality: There is absolutely NO smoke
+                clean_images_count += 1
+                if binary_mask_pred.max() == 1:  # Model: "Look, smoke!"
+                    hallucinations_count += 1
+            
             prec = precision(binary_mask_pred, binary_gt).item()
             total_precision += prec
             #print(binary_mask_pred)
@@ -72,6 +82,8 @@ def eval(model, args, loader):
             #loss = mse_loss(output, batch['mask'].to(args.device))
             #loss = mse_loss(output, resize(batch['mask'].to(args.device), [output[0].shape[-2],output[0].shape[-1]], antialias=True))
             total_loss += loss.item()
+            
+    hallucination_rate = hallucinations_count / clean_images_count if clean_images_count > 0 else 0.0
     
     loss_dict = {
         "model":args.exp,
@@ -81,6 +93,11 @@ def eval(model, args, loader):
         "mean_precision":total_precision/(i+1),
         "mean_recall":total_recall/(i+1),
         "mean_f1":total_f1/(i+1)
+        
+        "clean_images_evaluated": clean_images_count,
+        "total_hallucinations": hallucinations_count,
+        "false_alarm_rate": hallucination_rate
+        
     }
     return loss_dict
 
