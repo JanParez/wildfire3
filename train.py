@@ -83,7 +83,6 @@ def train(model, trainloader, valloader, args):
 
             if i % 10 == 0:
                 print('Epoch: {:d}, batch: {:d}, Last training loss: {:.4f}'.format(epoch, i, last_loss))
-                break
         
         print('Finished epoch: {:d}, training loss: {:.7f}. validating'.format(epoch, (epoch_loss/(i+1))))
         epoch_loss = 0
