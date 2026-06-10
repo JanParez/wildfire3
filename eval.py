@@ -92,7 +92,7 @@ def eval(model, args, loader):
         "mean_rand":total_rand/(i+1),
         "mean_precision":total_precision/(i+1),
         "mean_recall":total_recall/(i+1),
-        "mean_f1":total_f1/(i+1)
+        "mean_f1":total_f1/(i+1),
         
         "clean_images_evaluated": clean_images_count,
         "total_hallucinations": hallucinations_count,
