@@ -58,6 +58,10 @@ def train(model, trainloader, valloader, args):
         model.train()
         loss = 0
         optim.zero_grad()
+        
+        train_clean_images = 0
+        train_hallucinations = 0
+        
         for i, batch in enumerate(trainloader):
             if args.test_val:
                 break
@@ -65,7 +69,16 @@ def train(model, trainloader, valloader, args):
             if not args.boxsup:
                 mask = batch['mask'].to(args.device)
                 boundary = batch['boundary'].to(args.device)
-                losses, _, acc, loss_list = model(input, mask, boundary)
+                losses, outputs, acc, loss_list = model(input, mask, boundary)
+
+                preds = torch.round(torch.sigmoid(outputs[1].detach()))
+                
+                # Loop through every individual image inside this batch
+                for idx in range(mask.size(0)):
+                    if mask[idx].max() == 0:  # Real target has zero smoke
+                        train_clean_images += 1
+                        if preds[idx].max() == 1:  # Model guessed smoke anyway
+                            train_hallucinations += 1
             else:
                 loss = model(input, labels=None, bd_gt=None, id=None, 
                              box=batch['box'].to(args.device), 
@@ -83,6 +96,11 @@ def train(model, trainloader, valloader, args):
 
             if i % 10 == 0:
                 print('Epoch: {:d}, batch: {:d}, Last training loss: {:.4f}'.format(epoch, i, last_loss))
+        
+        train_rate = (train_hallucinations / train_clean_images * 100) if train_clean_images > 0 else 0.0
+        print('[TRAIN STATS] Clean Frames Processed: {:d} | Hallucinations: {:d} | False Alarm Rate: {:.2f}%'.format(
+            train_clean_images, train_hallucinations, train_rate
+        ))
         
         print('Finished epoch: {:d}, training loss: {:.7f}. validating'.format(epoch, (epoch_loss/(i+1))))
         epoch_loss = 0
