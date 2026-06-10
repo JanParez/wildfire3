@@ -37,6 +37,9 @@ class CrossEntropy(nn.Module):
         else:
             raise ValueError("lengths of prediction and target are not identical!")
 
+        if target.max() == 0:
+            loss = loss * 3.0
+
         
 
 
